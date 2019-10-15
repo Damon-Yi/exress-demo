@@ -31,3 +31,5 @@
 	http://193.112.79.19:8080/wifi/downloadMac								get 	date = 2018-03-21
 
 	http://47.56.199.89:3000/report/addReport
+
+	http://47.56.199.89:8088/#/report
