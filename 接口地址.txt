@@ -29,3 +29,5 @@
 	http://193.112.79.19:8080/wifi/importPhoneMac							post	fileName = wifi-2018-3-17
 
 	http://193.112.79.19:8080/wifi/downloadMac								get 	date = 2018-03-21
+
+	http://47.56.199.89:3000/report/addReport
