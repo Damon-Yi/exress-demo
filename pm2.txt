@@ -1,0 +1,6 @@
+npm install pm2 -g 
+pm2 start ./bin/www -i 0 -watch -f  //pm2 强制启服务 
+pm2 reload all
+pm2 restart all
+pm2 delete all
+pm2 log
