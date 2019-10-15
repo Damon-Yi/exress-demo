@@ -7,9 +7,6 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/wifiApi', function(req, res, next) {
-  setTimeout(() => {
-    a.b
-  })
   res.send('respond with a resource');
 });
 
