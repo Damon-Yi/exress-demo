@@ -13,8 +13,10 @@ let pool = mysql.createPool(dbConfig.mysql)
 
 router.post('/addReport', function(req, res, next){	//新增
 	let params = req.body; 
-	console.log(req)
+	console.log(req.body)
+	console.log('校验sql', common.verifySqlKeys(params))
 	if(params.name && params.mobile && common.verifySqlKeys(params)){
+		console.log('add')
 		let sqlValueTxt = `${wifiSql.reportData.insert} ("${params.proId}","${params.proName||''}","${params.name}","${params.mobile}","${params.address||''}","${params.convenientTime||''}")`
 		dbFun.insertReport(sqlValueTxt, res)
 	}else{
