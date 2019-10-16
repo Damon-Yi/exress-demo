@@ -3,6 +3,8 @@ let router = express.Router();
 let URL = require('url'); 
 let fs = require('fs');
 
+let common = require('./../utils/index');
+
 //mysql
 let mysql = require('mysql')
 let dbConfig = require('../db/DBconfig')
@@ -12,7 +14,7 @@ let pool = mysql.createPool(dbConfig.mysql)
 router.post('/addReport', function(req, res, next){	//新增
 	let params = req.body; 
 	console.log(req)
-	if(params.name&&params.mobile){
+	if(params.name && params.mobile && common.verifySqlKeys(params)){
 		let sqlValueTxt = `${wifiSql.reportData.insert} ("${params.proId}","${params.proName||''}","${params.name}","${params.mobile}","${params.address||''}","${params.convenientTime||''}")`
 		dbFun.insertReport(sqlValueTxt, res)
 	}else{
