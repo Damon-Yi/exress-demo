@@ -11,7 +11,6 @@ var filePath = path.normalize('F:\\damon\\佰仟\\expressDemo\\wifiData'),
 //读取文件内容
 var obj = xlsx.parse(currXlsxFile);
 var excelObj=obj[0].data;
-console.log(excelObj.length);
 
 var data = [],
     dataKey = []
@@ -22,7 +21,7 @@ for(var i in excelObj){
         data.push([excelObj[i][0],excelObj[i][1],excelObj[i][2],excelObj[i][3]]);
     }
 }
-console.log(data.length)
+
 var buffer = xlsx.build([
     {
         name:'sheet1',

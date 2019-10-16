@@ -32,10 +32,18 @@ router.post('/queryReport', function(req, res, next){	//新增
 	dbFun.queryReport(sqlValueTxt, res)
 })
 
+router.post('/queryReportByDate', function(req, res, next){	//新增
+	let {startTime, endTime} = req.body; 
+	let sqlValueTxt = wifiSql.reportData.queryByDate(startTime, endTime);
+	dbFun.queryReportByDate(sqlValueTxt, res)
+})
+
 let dbFun = {
 	insertReport: function(sqlValueTxt, res){	//新增
-		pool.getConnection(function(err, connection) { 
+		console.log(sqlValueTxt) 
+		pool.getConnection(function(err, connection) {
 			connection.query(sqlValueTxt, function(err, result) {
+				console.log(err, result)
 				if(result) {      
 					result = '提交成功！';
 				}     
@@ -45,10 +53,13 @@ let dbFun = {
 		});
 	},
 	queryReport: function(sqlValueTxt, res){	//查询
+		console.log(sqlValueTxt)
 		pool.getConnection(function(err, connection) { 
 			connection.query(wifiSql.reportData.queryTotal, function(err, result) {
-				let count = result.length > 0 ? result[0]["COUNT(*)"] : 0
+				if(result){
+					let count = result.length > 0 ? result[0]["COUNT(*)"] : 0
 					connection.query(sqlValueTxt, function(err, result1) {
+						console.log(err, result1)
 						repJSON(res, { 
 							code: 0,   
 							msg:'操作成功',
@@ -57,9 +68,36 @@ let dbFun = {
 						});   
 						connection.release();  
 					});
+				}else{
+					repJSON(res, { 
+						code: 1,   
+						msg:'操作失败'
+					}); 
+				}
 			 });
 		}); 
-		
+	},
+	queryReportByDate: function(sqlValueTxt, res){	//查询
+		console.log(sqlValueTxt)
+		pool.getConnection(function(err, connection) {
+			connection.query(sqlValueTxt, function(err, result) {
+				console.log(err, result)
+				if(result){
+
+					repJSON(res, { 
+						code: 0,   
+						msg:'操作成功',
+						data: result, 
+					});   
+				}else{
+					repJSON(res, { 
+						code: 1,   
+						msg:'操作失败'
+					}); 
+				}
+				connection.release(); 
+			}); 
+		}); 
 	}
 }
 
