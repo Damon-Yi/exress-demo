@@ -12,8 +12,8 @@ var wifiSql = {
 	},
 	reportData:{
 		insert:'INSERT INTO report_info(proId,proName,name,mobile,address,convenientTime) VALUE',
-		queryAll:'SELECT * FROM report_info',
-		queryAllPhoneMac:'SELECT proId FROM report_info',
+		queryAll:'SELECT * FROM report_info ORDER BY createTime DESC',
+		queryTotal: 'SELECT COUNT(*) FROM report_info',
 		queryByDate:'SELECT * FROM report_info WHERE date_format(report_info.create_time,"%Y-%m-%d")='
 	}
 }

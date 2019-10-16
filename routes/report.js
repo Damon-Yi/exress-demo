@@ -1,47 +1,69 @@
-var express = require('express');
-var router = express.Router();
-var URL = require('url'); 
-var fs = require('fs');
+let express = require('express');
+let router = express.Router();
+let URL = require('url'); 
+let fs = require('fs');
 
 //mysql
-var mysql = require('mysql')
-var dbConfig = require('../db/DBconfig')
-var wifiSql = require('../db/wifiSQL')
-var pool = mysql.createPool(dbConfig.mysql)
+let mysql = require('mysql')
+let dbConfig = require('../db/DBconfig')
+let wifiSql = require('../db/wifiSQL')
+let pool = mysql.createPool(dbConfig.mysql)
 
-router.post('/addReport', function(req, res, next){	//新增mac基础数据
-	var params = req.body; 
+router.post('/addReport', function(req, res, next){	//新增
+	let params = req.body; 
 	console.log(req)
 	if(params.name&&params.mobile){
-		var sqlValueTxt = `${wifiSql.reportData.insert} ("${params.proId}","${params.proName||''}","${params.name}","${params.mobile}","${params.address||''}","${params.convenientTime||''}")`
+		let sqlValueTxt = `${wifiSql.reportData.insert} ("${params.proId}","${params.proName||''}","${params.name}","${params.mobile}","${params.address||''}","${params.convenientTime||''}")`
 		dbFun.insertReport(sqlValueTxt, res)
 	}else{
 		repJSON(res, '提交失败！'); 
 	}
 })
 
+router.post('/queryReport', function(req, res, next){	//新增
+	let {pageNum = 0, pageSize = 0} = req.body; 
+	let sqlValueTxt = '';
+	if(pageNum&&pageSize){
+		let offset = (pageNum - 1)*pageSize;
+		sqlValueTxt = `${wifiSql.reportData.queryAll} limit ${offset}, ${pageSize}`;
+	}else{
+		sqlValueTxt = `${wifiSql.reportData.queryAll}`;
+	}
+	dbFun.queryReport(sqlValueTxt, res)
+})
+
 let dbFun = {
-	insertReport: function(sqlValueTxt, res){	//新增厂商匹配基础数据
-		console.log(sqlValueTxt)
+	insertReport: function(sqlValueTxt, res){	//新增
 		pool.getConnection(function(err, connection) { 
 			connection.query(sqlValueTxt, function(err, result) {
-				console.log(result)
 				if(result) {      
-					// result = {   
-					// 	code: 0,   
-					// 	msg:'添加成功',
-					// 	data: { prdId: result.insertId }
-					// }; 
 					result = '提交成功！';
 				}     
 				repJSON(res, result);   
 				connection.release();  
 		   });
 		});
+	},
+	queryReport: function(sqlValueTxt, res){	//查询
+		pool.getConnection(function(err, connection) { 
+			connection.query(wifiSql.reportData.queryTotal, function(err, result) {
+				let count = result.length > 0 ? result[0]["COUNT(*)"] : 0
+					connection.query(sqlValueTxt, function(err, result1) {
+						repJSON(res, { 
+							code: 0,   
+							msg:'操作成功',
+							data: result1, 
+							total: count
+						});   
+						connection.release();  
+					});
+			 });
+		}); 
+		
 	}
 }
 
-var repJSON = function (res, ret) { //返回结果
+let repJSON = function (res, ret) { //返回结果
 	if(typeof ret === 'undefined') { 
 		res.json({code:1,msg: '操作失败',data:''})
 	} else { 
