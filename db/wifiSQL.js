@@ -12,10 +12,11 @@ var wifiSql = {
 	},
 	reportData:{
 		insert:'INSERT INTO report_info(proId,proName,name,mobile,address,convenientTime) VALUE',
-		queryAll:'SELECT * FROM report_info ORDER BY createTime DESC',
-		queryTotal: 'SELECT COUNT(*) FROM report_info',
-		queryByDate: (startTime, endTime) => `SELECT * FROM report_info WHERE createTime BETWEEN '${startTime} 00:00:00' AND '${endTime} 23:59:59'`
-		// SELECT * FROM report_info WHERE createTime BETWEEN '2019-10-15 00:00:00' AND '2019-10-15 23:59:59';
+		queryAll:'SELECT * FROM report_info WHERE status = 0 ORDER BY createTime DESC',
+		queryTotal: 'SELECT COUNT(*) FROM report_info WHERE status = 0',
+		queryByDate: (startTime, endTime) => `SELECT * FROM report_info WHERE status = 0' AND createTime BETWEEN '${startTime} 00:00:00' AND '${endTime} 23:59:59' ORDER BY createTime DESC`,
+		// SELECT * FROM report_info WHERE createTime BETWEEN '2019-10-15 00:00:00' AND '2019-10-15 23:59:59' ORDER BY createTime DESC;
+		delete: id => `UPDATE report_info SET status = 1 where id = ${id}`
 	}
 }
 

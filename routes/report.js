@@ -24,7 +24,7 @@ router.post('/addReport', function(req, res, next){	//新增
 	}
 })
 
-router.post('/queryReport', function(req, res, next){	//新增
+router.post('/queryReport', function(req, res, next){	//查询
 	let {pageNum = 0, pageSize = 0} = req.body; 
 	let sqlValueTxt = '';
 	if(pageNum&&pageSize){
@@ -36,10 +36,16 @@ router.post('/queryReport', function(req, res, next){	//新增
 	dbFun.queryReport(sqlValueTxt, res)
 })
 
-router.post('/queryReportByDate', function(req, res, next){	//新增
+router.post('/queryReportByDate', function(req, res, next){	//按日期查询
 	let {startTime, endTime} = req.body; 
 	let sqlValueTxt = wifiSql.reportData.queryByDate(startTime, endTime);
 	dbFun.queryReportByDate(sqlValueTxt, res)
+})
+
+router.post('/deleteReport', function(req, res, next){	//按日期查询
+	let {id} = req.body; 
+	let sqlValueTxt = wifiSql.reportData.delete(id);
+	dbFun.deleteReport(sqlValueTxt, res)
 })
 
 let dbFun = {
@@ -70,7 +76,6 @@ let dbFun = {
 							data: result1, 
 							total: count
 						});   
-						connection.release();  
 					});
 				}else{
 					repJSON(res, { 
@@ -78,6 +83,7 @@ let dbFun = {
 						msg:'操作失败'
 					}); 
 				}
+				connection.release();  
 			 });
 		}); 
 	},
@@ -87,7 +93,6 @@ let dbFun = {
 			connection.query(sqlValueTxt, function(err, result) {
 				console.log(err, result)
 				if(result){
-
 					repJSON(res, { 
 						code: 0,   
 						msg:'操作成功',
@@ -102,7 +107,27 @@ let dbFun = {
 				connection.release(); 
 			}); 
 		}); 
-	}
+	},
+	deleteReport: function(sqlValueTxt, res){	//删除
+		console.log(sqlValueTxt) 
+		pool.getConnection(function(err, connection) {
+		    connection.query(sqlValueTxt, function(err, result) {
+				console.log(err, result)
+				if(result){
+					repJSON(res, { 
+						code: 0,   
+						msg:'操作成功'
+					});   
+				}else{
+					repJSON(res, { 
+						code: 1,   
+						msg:'操作失败'
+					}); 
+				}
+				connection.release();  
+			});
+		});
+	},
 }
 
 let repJSON = function (res, ret) { //返回结果
