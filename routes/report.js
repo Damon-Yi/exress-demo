@@ -17,7 +17,7 @@ router.post('/addReport', function(req, res, next){	//新增
 	console.log('校验sql', common.verifySqlKeys(params))
 	if(params.name && params.mobile && common.verifySqlKeys(params)){
 		console.log('add')
-		let sqlValueTxt = `${wifiSql.reportData.insert} ("${params.proId}","${params.proName||''}","${params.name}","${params.mobile}","${params.address||''}","${params.convenientTime||''}")`
+		let sqlValueTxt = `${wifiSql.reportData.insert} ("${params.proId}","${params.proName||''}","${params.name}","${params.mobile}","${params.address||''}","${params.convenientTime||''}", "${params.channel||''}")`
 		dbFun.insertReport(sqlValueTxt, res)
 	}else{
 		repJSON(res, '提交失败！'); 
@@ -55,7 +55,10 @@ let dbFun = {
 			connection.query(sqlValueTxt, function(err, result) {
 				console.log(err, result)
 				if(result) {      
-					result = '提交成功！';
+					result = { 
+						code: 0,   
+						msg:'提交成功'
+					};
 				}     
 				repJSON(res, result);   
 				connection.release();  
