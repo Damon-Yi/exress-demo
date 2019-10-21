@@ -33,3 +33,7 @@
 	http://47.56.199.89:3000/report/addReport
 
 	http://47.56.199.89:8088/#/report
+	anywhere -p 8088
+
+	anywhere -p 8081
+	anywhere -p 8080
