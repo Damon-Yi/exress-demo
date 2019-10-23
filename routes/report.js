@@ -42,10 +42,29 @@ router.post('/queryReportByDate', function(req, res, next){	//按日期查询
 	dbFun.queryReportByDate(sqlValueTxt, res)
 })
 
-router.post('/deleteReport', function(req, res, next){	//按日期查询
+router.post('/deleteReport', function(req, res, next){	//删除
 	let {id} = req.body; 
 	let sqlValueTxt = wifiSql.reportData.delete(id);
 	dbFun.deleteReport(sqlValueTxt, res)
+})
+
+router.post('/addRemark', function(req, res, next){	//新增备注
+	let params = req.body; 
+	console.log(req.body)
+	console.log('校验sql', common.verifySqlKeys(params))
+	if(params.reportId && params.remark && common.verifySqlKeys(params)){
+		console.log('add remark')
+		let sqlValueTxt = wifiSql.remarkData.insert({reportId: params.reportId, remark: params.remark})
+		dbFun.insertRemark(sqlValueTxt, res)
+	}else{
+		repJSON(res, '提交失败！'); 
+	}
+})
+
+router.post('/addRemark', function(req, res, next){	//删除备注
+	let {id} = req.body; 
+	let sqlValueTxt = wifiSql.remarkData.delete(id);
+	dbFun.deleteRemark(sqlValueTxt, res)
 })
 
 let dbFun = {
@@ -131,6 +150,42 @@ let dbFun = {
 			});
 		});
 	},
+	insertRemark: function(sqlValueTxt, res){	//新增 备注
+		console.log(sqlValueTxt) 
+		pool.getConnection(function(err, connection) {
+			connection.query(sqlValueTxt, function(err, result) {
+				console.log(err, result)
+				if(result) {      
+					result = { 
+						code: 0,   
+						msg:'提交成功'
+					};
+				}     
+				repJSON(res, result);   
+				connection.release();  
+		   });
+		});
+	},
+	deleteRemark: function(sqlValueTxt, res){	//删除 备注
+		console.log(sqlValueTxt) 
+		pool.getConnection(function(err, connection) {
+		    connection.query(sqlValueTxt, function(err, result) {
+				console.log(err, result)
+				if(result){
+					repJSON(res, { 
+						code: 0,   
+						msg:'操作成功'
+					});   
+				}else{
+					repJSON(res, { 
+						code: 1,   
+						msg:'操作失败'
+					}); 
+				}
+				connection.release();  
+			});
+		});
+	}
 }
 
 let repJSON = function (res, ret) { //返回结果

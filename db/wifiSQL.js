@@ -17,6 +17,10 @@ var wifiSql = {
 		queryByDate: (startTime, endTime) => `SELECT * FROM report_info WHERE status = 0' AND createTime BETWEEN '${startTime} 00:00:00' AND '${endTime} 23:59:59' ORDER BY createTime DESC`,
 		// SELECT * FROM report_info WHERE createTime BETWEEN '2019-10-15 00:00:00' AND '2019-10-15 23:59:59' ORDER BY createTime DESC;
 		delete: id => `UPDATE report_info SET status = 1 where id = ${id}`
+	},
+	remarkData: {
+		insert: ({reportId, remark}) => `INSERT INTO report_info(reportId, remark) VALUE (${reportId}, ${remark})`,
+		delete: id => `UPDATE report_info SET status = 1 where id = ${id}`
 	}
 }
 
