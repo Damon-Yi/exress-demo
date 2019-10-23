@@ -61,7 +61,7 @@ router.post('/addRemark', function(req, res, next){	//新增备注
 	}
 })
 
-router.post('/addRemark', function(req, res, next){	//删除备注
+router.post('/deleteRemark', function(req, res, next){	//删除备注
 	let {id} = req.body; 
 	let sqlValueTxt = wifiSql.remarkData.delete(id);
 	dbFun.deleteRemark(sqlValueTxt, res)
@@ -89,15 +89,27 @@ let dbFun = {
 		pool.getConnection(function(err, connection) { 
 			connection.query(wifiSql.reportData.queryTotal, function(err, result) {
 				if(result){
-					let count = result.length > 0 ? result[0]["COUNT(*)"] : 0
+					let total = result.length > 0 ? result[0]["COUNT(*)"] : 0
 					connection.query(sqlValueTxt, function(err, result1) {
 						console.log(err, result1)
-						repJSON(res, { 
-							code: 0,   
-							msg:'操作成功',
-							data: result1, 
-							total: count
-						});   
+						let count = 0
+						result1.forEach((v, index) => {
+							let sqlTxt = wifiSql.remarkData.queryAllByreportId(v.id)
+							connection.query(sqlTxt, function(err, result2) {
+								result1[index].remarks = result2
+								count++
+								if(count == result1.length){
+									console.log('111------------', result1)
+									repJSON(res, { 
+										code: 0,   
+										msg:'操作成功',
+										data: result1, 
+										total
+									});
+								}
+							})
+						})
+						   
 					});
 				}else{
 					repJSON(res, { 

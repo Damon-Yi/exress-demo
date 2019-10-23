@@ -19,8 +19,9 @@ var wifiSql = {
 		delete: id => `UPDATE report_info SET status = 1 where id = ${id}`
 	},
 	remarkData: {
-		insert: ({reportId, remark}) => `INSERT INTO report_info(reportId, remark) VALUE (${reportId}, ${remark})`,
-		delete: id => `UPDATE report_info SET status = 1 where id = ${id}`
+		queryAllByreportId: reportId => `SELECT * FROM report_remark WHERE reportId = ${reportId} AND status = 0 ORDER BY createTime DESC`,
+		insert: ({reportId, remark}) => `INSERT INTO report_remark(reportId, remark) VALUE (${reportId}, '${remark}')`,
+		delete: id => `UPDATE report_remark SET status = 1 where id = ${id}`
 	}
 }
 
